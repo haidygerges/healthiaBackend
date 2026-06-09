@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Patient = require('../models/Patient');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const nodemailer = require('nodemailer');
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;

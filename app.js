@@ -6,21 +6,29 @@ const app = express();
 
 connectDB();
 
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:3000'],
+  credentials: true,
+}));
 app.use(express.json());
-app.use('/api/auth', require('./src/routes/auth.routes'));
-app.use('/api/doctors', require('./src/routes/doctor.routes'));
-app.use('/api/patients', require('./src/routes/patient.routes'));
-app.use('/api/plans', require('./src/routes/plan.routes'));
-app.use('/api/appointments', require('./src/routes/appointment.routes'));
-app.use('/api/analytics', require('./src/routes/analytics.routes'));
+
+app.use('/api/auth',          require('./src/routes/auth.routes'));
+app.use('/api/doctors',       require('./src/routes/doctor.routes'));
+app.use('/api/patients',      require('./src/routes/patient.routes'));
+app.use('/api/plans',         require('./src/routes/plan.routes'));
+app.use('/api/appointments',  require('./src/routes/appointment.routes'));
+app.use('/api/availability',  require('./src/routes/availability.routes'));
+app.use('/api/slots',         require('./src/routes/slot.routes'));
+app.use('/api/notifications', require('./src/routes/notification.routes'));
+app.use('/api/analytics',     require('./src/routes/analytics.routes'));
+app.use('/api/daily-logs',    require('./src/routes/dailyLog.routes'));
+app.use('/api/foods',         require('./src/routes/food.routes'));
 
 if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 5000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
 }
 
 module.exports = app;
-

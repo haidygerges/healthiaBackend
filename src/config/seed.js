@@ -1,4 +1,4 @@
-// امسحي كل اللي موجود واستبدليه بده
+
 require('dotenv').config({ path: 'C:\\Users\\Admin\\Desktop\\Backend\\.env' });
 const mongoose = require('mongoose');
 const User = require('../models/User');

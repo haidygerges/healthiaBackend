@@ -108,15 +108,67 @@ exports.getMyProfile = async (req, res) => {
 // الدكتور يعدل بروفايله
 exports.updateMyProfile = async (req, res) => {
   try {
-    const { name, phone, specialization } = req.body;
+    const { name, phone, specialization, bio, location, languages, email, licenseId, licenseExpiry, specialties, education } = req.body;
     const doctor = await User.findById(req.user.id);
 
-    if (name) doctor.name = name;
-    if (phone) doctor.phone = phone;
+    if (name)           doctor.name           = name;
+    if (phone)          doctor.phone          = phone;
     if (specialization) doctor.specialization = specialization;
+    if (bio  !== undefined) doctor.bio        = bio;
+    if (location !== undefined) doctor.location  = location;
+    if (languages !== undefined) doctor.languages = languages;
+    if (email)          doctor.email          = email;
+    if (licenseId  !== undefined) doctor.licenseId     = licenseId;
+    if (licenseExpiry !== undefined) doctor.licenseExpiry = licenseExpiry;
+    if (specialties !== undefined) doctor.specialties  = specialties;
+    if (education   !== undefined) doctor.education    = education;
 
+    await doctor.save({ validateBeforeSave: false });
+    const updated = await User.findById(req.user.id).select('-password');
+    res.json({ message: 'Profile updated successfully', doctor: updated });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// ✅ الدكتور يغير الباسورد
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    if (!currentPassword || !newPassword)
+      return res.status(400).json({ message: 'Both passwords are required' });
+
+    const strongPassword = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+    if (!strongPassword.test(newPassword))
+      return res.status(400).json({ message: 'Password must be at least 8 characters with letters, numbers and symbols' });
+
+    const bcrypt = require('bcryptjs');
+    const doctor = await User.findById(req.user.id);
+    const match  = await bcrypt.compare(currentPassword, doctor.password);
+    if (!match)
+      return res.status(400).json({ message: 'Current password is incorrect' });
+
+    doctor.password = newPassword; // pre-save هيعمل hash
     await doctor.save();
-    res.json({ message: 'Profile updated successfully', doctor });
+    res.json({ message: 'Password changed successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+// ✅ Update Notification Preferences
+exports.updateNotificationPreferences = async (req, res) => {
+  try {
+    const { newAppointments, patientMessages, systemUpdates } = req.body;
+    const doctor = await User.findById(req.user.id);
+
+    doctor.notificationPreferences = {
+      newAppointments: newAppointments ?? doctor.notificationPreferences?.newAppointments ?? true,
+      patientMessages: patientMessages ?? doctor.notificationPreferences?.patientMessages ?? true,
+      systemUpdates:   systemUpdates   ?? doctor.notificationPreferences?.systemUpdates   ?? false,
+    };
+
+    await doctor.save({ validateBeforeSave: false });
+    res.json({ message: 'Preferences updated', notificationPreferences: doctor.notificationPreferences });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

@@ -1,32 +1,28 @@
 const express = require('express');
-const router = express.Router();
+const router  = express.Router();
 const {
-  addPatient,
-  getMyPatients,
-  getAllPatients,
-  getPatientById,
-  updatePatient,
-  deletePatient,
-  getMyProfile,
+  addPatient, getMyPatients, getAllPatients,
+  getPatientById, updatePatient, deletePatient,
+  getMyProfile, updateMyProfile,
+  addNote, deleteNote, editNote,
 } = require('../controllers/patient.controller');
-const { 
-  protect, 
-  isSuperAdmin, 
-  isDoctor, 
-  isPatient 
-} = require('../middleware/auth.middleware');
+const { protect, isSuperAdmin, isDoctor, isPatient } = require('../middleware/auth.middleware');
 
-// السوبر ادمن - يشوف كل الـ patients
+// ─── Super Admin ──────────────────────────────
 router.get('/all', protect, isSuperAdmin, getAllPatients);
 
-// الـ Patient - يشوف بروفايله بس
-router.get('/me', protect, isPatient, getMyProfile);
+// ─── Patient (بروفايل نفسه) ──────────────────
+router.get('/me',        protect, isPatient, getMyProfile);
+router.put('/me/update', protect, isPatient, updateMyProfile);
 
-// الدكتور - يضيف ويشوف patients بتوعه
-router.post('/', protect, isDoctor, addPatient);
-router.get('/', protect, isDoctor, getMyPatients);
-router.get('/:id', protect, isDoctor, getPatientById);
-router.put('/:id', protect, isDoctor, updatePatient);
-router.delete('/:id', protect, isDoctor, deletePatient);
+// ─── Doctor ──────────────────────────────────
+router.post('/',                        protect, isDoctor, addPatient);
+router.get('/',                         protect, isDoctor, getMyPatients);
+router.get('/:id',                      protect, isDoctor, getPatientById);
+router.put('/:id',                      protect, isDoctor, updatePatient);
+router.delete('/:id',                   protect, isDoctor, deletePatient);
+router.post('/:id/notes',               protect, isDoctor, addNote);
+router.delete('/:id/notes/:noteId',     protect, isDoctor, deleteNote);
+router.put('/:id/notes/:noteId',        protect, isDoctor, editNote);
 
 module.exports = router;

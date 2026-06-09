@@ -12,11 +12,11 @@ const appointmentSchema = new mongoose.Schema({
     required: true,
   },
   date: { type: Date, required: true },
-  time: { type: String, required: true },   // "10:00 AM"
+  time: { type: String, required: true },
   type: {
     type: String,
-    enum: ['online', 'offline'],
-    default: 'online',
+    enum: ['Initial Consultation', 'Follow-up', 'Nutrition Review', 'Emergency', 'online', 'offline'],
+    default: 'Follow-up',
   },
   status: {
     type: String,
