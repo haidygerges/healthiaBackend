@@ -6,7 +6,16 @@ const app = express();
 
 connectDB();
 
-app.use(cors({ origin: 'http://localhost:5173' }));
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'https://healthia.vercel.app',
+    'https://healthia-git-main-mona-alqattans-projects.vercel.app'
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
 app.use(express.json());
 
 app.use('/api/auth',          require('./src/routes/auth.routes'));
