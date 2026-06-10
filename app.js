@@ -29,6 +29,7 @@ app.use('/api/notifications', require('./src/routes/notification.routes'));
 app.use('/api/analytics',     require('./src/routes/analytics.routes'));
 app.use('/api/daily-logs',    require('./src/routes/dailyLog.routes'));
 app.use('/api/foods',         require('./src/routes/food.routes'));
+app.use('/api/support',       require('./src/routes/support.routes'));
 
 if (require.main === module) {
   const PORT = process.env.PORT || 5000;
