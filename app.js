@@ -10,7 +10,7 @@ app.use(cors({
   origin: [
     'http://localhost:5173',
     'https://healthia.vercel.app',
-    'https://healthia-git-main-mona-alqattans-projects.vercel.app'
+    'https://healthia777.vercel.app'
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
