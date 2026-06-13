@@ -7,11 +7,11 @@ const app = express();
 connectDB();
 
 app.use(cors({
-  origin: [
-    'http://localhost:5173',
-    'https://healthia.vercel.app',
-    'https://healthia-ecru.vercel.app/login'
-  ],
+  // origin: [
+  //   'http://localhost:5173',
+  //   'https://healthia.vercel.app',
+  //   'https://healthia-ecru.vercel.app/login'
+  // ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
