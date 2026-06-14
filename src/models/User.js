@@ -28,6 +28,7 @@ const userSchema = new mongoose.Schema({
     patientMessages: { type: Boolean, default: true  },
     systemUpdates:   { type: Boolean, default: false },
   },
+  resetPasswordOTP:     { type: String },
   resetPasswordExpires: { type: Date },
 }, { timestamps: true });
 
