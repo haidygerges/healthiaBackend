@@ -1,5 +1,6 @@
 const Plan    = require('../models/Plan');
 const Patient = require('../models/Patient');
+const Food    = require('../models/Food');
 
 // ─── goal label map ───
 const GOAL_LABELS = {
@@ -7,6 +8,25 @@ const GOAL_LABELS = {
   gain:     'Weight Gain',
   maintain: 'Maintain Weight',
 };
+
+// ─── helper: تعبئة ماكروز الوجبات الناقصة من جدول الأكل (auto-heal للخطط القديمة) ───
+async function backfillMealMacros(days) {
+  if (!Array.isArray(days)) return;
+  for (const d of days) {
+    if (!d || !Array.isArray(d.meals)) continue;
+    for (const m of d.meals) {
+      const hasMacros = (m.protein || 0) + (m.carbs || 0) + (m.fats || 0) > 0;
+      if (hasMacros || !m.name) continue;
+      const food = await Food.findOne({ name: m.name });
+      if (food) {
+        m.protein = food.protein || 0;
+        m.carbs   = food.carbs   || 0;
+        m.fats    = food.fat     || 0;
+      }
+    }
+  }
+}
+
 
 // ─── helper: بداية الأسبوع الحالي (الأحد) ───
 function getCurrentWeekStart() {
@@ -41,6 +61,8 @@ exports.addPlan = async (req, res) => {
       goals, duration, startDate, endDate, notes,
       days, meals, caloriesTarget, protein, carbs, fats,
     } = req.body;
+
+    await backfillMealMacros(days); // ✅ املأ الماكروز الناقصة
 
     const plan = await Plan.create({
       patient,
@@ -109,6 +131,8 @@ exports.updatePlan = async (req, res) => {
       'calculatorData',
     ];
     fields.forEach(f => { if (req.body[f] !== undefined) plan[f] = req.body[f]; });
+
+    await backfillMealMacros(plan.days); // ✅ املأ الماكروز الناقصة
 
     // ✅ لما الدكتور يعدّل الخطة → نعمل reset للـ completed للأسبوع الجديد
     plan.weekStartDate = getCurrentWeekStart();
