@@ -71,7 +71,8 @@ exports.addPlan = async (req, res) => {
 exports.getPatientPlans = async (req, res) => {
   try {
     const plans = await Plan.find({ patient: req.params.patientId })
-      .populate('doctor', 'name specialization');
+      .populate('doctor', 'name specialization')
+      .sort({ updatedAt: -1 }); // ✅ الأحدث الأول
     res.json(plans);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -150,7 +151,8 @@ exports.deletePlan = async (req, res) => {
 exports.getMyPlans = async (req, res) => {
   try {
     const plans = await Plan.find({ patient: req.user.id })
-      .populate('doctor', 'name specialization');
+      .populate('doctor', 'name specialization')
+      .sort({ updatedAt: -1 }); // ✅ الأحدث (آخر تعديل/إضافة) الأول
 
     // نفحص كل plan لو محتاج reset
     const savePromises = [];
