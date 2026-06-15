@@ -6,14 +6,24 @@ const app = express();
 
 connectDB();
 
+// ✅ CORS — لازم يسمح بـ PATCH (أزرار Mark as Done بتستخدمها) وبدومينات Vercel
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://healthia.vercel.app',
+  'https://healthia777.vercel.app',
+  'https://healthia-ecru.vercel.app',
+];
+
 app.use(cors({
-  // origin: [
-  //   'http://localhost:5173',
-  //   'https://healthia.vercel.app',
-  //   'https://healthia-ecru.vercel.app/login'
-  // ],
+  origin: (origin, callback) => {
+    // اسمح للطلبات من غير origin (زي Postman) ولأي دومين vercel.app بتاع المشروع
+    if (!origin || allowedOrigins.includes(origin) || /\.vercel\.app$/.test(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'], // ✅ ضفنا PATCH
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
