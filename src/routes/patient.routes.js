@@ -6,7 +6,7 @@ const {
   getMyProfile, updateMyProfile,
   addNote, deleteNote, editNote,
 } = require('../controllers/patient.controller');
-const { protect, isSuperAdmin, isDoctor, isPatient } = require('../middleware/auth.middleware');
+const { protect, isSuperAdmin, isDoctor, isPatient, isDoctorOrSuperAdmin } = require('../middleware/auth.middleware');
 
 // ─── Super Admin ──────────────────────────────
 router.get('/all', protect, isSuperAdmin, getAllPatients);
@@ -20,7 +20,7 @@ router.post('/',                        protect, isDoctor, addPatient);
 router.get('/',                         protect, isDoctor, getMyPatients);
 router.get('/:id',                      protect, isDoctor, getPatientById);
 router.put('/:id',                      protect, isDoctor, updatePatient);
-router.delete('/:id',                   protect, isDoctor, deletePatient);
+router.delete('/:id',                   protect, isDoctorOrSuperAdmin, deletePatient);
 router.post('/:id/notes',               protect, isDoctor, addNote);
 router.delete('/:id/notes/:noteId',     protect, isDoctor, deleteNote);
 router.put('/:id/notes/:noteId',        protect, isDoctor, editNote);
