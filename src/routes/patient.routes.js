@@ -20,7 +20,7 @@ router.post('/',                        protect, isDoctor, addPatient);
 router.get('/',                         protect, isDoctor, getMyPatients);
 router.get('/:id',                      protect, isDoctor, getPatientById);
 router.put('/:id',                      protect, isDoctor, updatePatient);
-router.delete('/:id',                   protect, isDoctor, isPatient, deletePatient);
+router.delete('/:id',                   protect, isDoctor, isSuperAdmin, deletePatient);
 router.post('/:id/notes',               protect, isDoctor, addNote);
 router.delete('/:id/notes/:noteId',     protect, isDoctor, deleteNote);
 router.put('/:id/notes/:noteId',        protect, isDoctor, editNote);
