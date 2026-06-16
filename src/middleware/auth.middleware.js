@@ -48,3 +48,11 @@ exports.isPatient = (req, res, next) => {
     return res.status(403).json({ message: 'Patients only' });
   next();
 };
+
+// الدكتور أو السوبر أدمن
+exports.isDoctorOrSuperAdmin = (req, res, next) => {
+  if (req.user.role === 'doctor' || req.user.role === 'superadmin') {
+    return next();
+  }
+  return res.status(403).json({ message: 'Doctors and Super Admins only' });
+};
