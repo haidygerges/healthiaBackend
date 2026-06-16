@@ -1,6 +1,7 @@
 const Patient   = require('../models/Patient');
 const DailyLog  = require('../models/DailyLog');
 const Plan      = require('../models/Plan');
+const { createNotification } = require('./notification.controller');
 
 // ── حساب الـ compliance لمريض واحد ──────────────────────────────
 async function calcCompliance(patientId) {
@@ -85,6 +86,13 @@ exports.addPatient = async (req, res) => {
       height: height ? Number(height) : 0,
       doctor: req.user.id,
     });
+    await createNotification({
+  recipient: req.user.id,
+  title:     'New Patient Added',
+  message:   `Patient ${patient.name} has been added successfully.`,
+  icon:      '🧑‍⚕️',
+  data:      { patientId: patient._id },
+});
 
     // رجّع الـ patient مع الـ plain password عشان الدكتور يعطيه للـ patient
     res.status(201).json({
