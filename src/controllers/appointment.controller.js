@@ -92,6 +92,13 @@ exports.bookByPatient = async (req, res) => {
       type: type || 'Follow-up',
       notes: notes || '',
     });
+    await createNotification({
+  recipient: patient.doctor,
+  title:     'New Appointment Booked',
+  message:   `${patient.name} booked an appointment on ${date} at ${time}.`,
+  icon:      '📅',
+  data:      { appointmentId: appointment._id },
+});
 
     const populated = await Appointment.findById(appointment._id)
       .populate('doctor', 'name specialization email');
